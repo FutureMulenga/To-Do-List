@@ -12,6 +12,7 @@ const Register = () => {
   const { register, loading } = useAuth();
   const navigate = useNavigate();
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -40,6 +41,7 @@ const Register = () => {
       password2: confirmPassword  
     };
 
+    // Call the register function from AuthContext
     const success = await register(userData);
     if (success) {
       navigate('/');

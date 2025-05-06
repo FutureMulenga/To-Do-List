@@ -10,6 +10,7 @@ const Login = () => {
   const { login, loading } = useAuth();
   const navigate = useNavigate();
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');

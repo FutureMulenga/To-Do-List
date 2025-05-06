@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Calendar, Flag, Tag, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +15,7 @@ const AddTask = ({ onTaskAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     

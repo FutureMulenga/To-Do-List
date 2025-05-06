@@ -18,6 +18,7 @@ const TodoItem = () => {
   
   useEffect(() => {
     fetchTasks();
+  
   }, []);
 
   const fetchTasks = async () => {

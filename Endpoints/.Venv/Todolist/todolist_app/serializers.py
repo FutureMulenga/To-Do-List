@@ -48,6 +48,28 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+# Generate token for the new user
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+        extra_kwargs = {
+            'username': {'required': False},
+            'email': {'required': False},
+        }
+
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def validate_username(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(username=value).exists():
+            raise serializers.ValidationError("This username is already in use.")
+        return value
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -79,4 +101,10 @@ class TaskSerializer(serializers.ModelSerializer):
         if data['due_date']:
             data['due_date'] = instance.due_date.isoformat()
         return data
+
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
+        read_only_fields = ('date_joined',)
 

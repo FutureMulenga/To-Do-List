@@ -69,8 +69,8 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Match with your frontend expectations
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=3600),  # 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
@@ -81,7 +81,7 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     
-    'AUTH_HEADER_TYPES': ('Bearer',),  # Important! Your frontend uses 'Bearer' token
+    'AUTH_HEADER_TYPES': ('Bearer',), 
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',

@@ -1,0 +1,236 @@
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  background-color: var(--page-bg);
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem 0;
+  position: relative;
+}
+
+.about-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: #3b82f6;
+  border-radius: 2px;
+}
+
+.about-header h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 3rem;
+  color: #1e293b;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.header-icon {
+  color: #3b82f6;
+  width: 40px;
+  height: 40px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1.5rem;
+  font-weight: 400;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 4rem;
+}
+
+section h2 {
+  color: #2d3748;
+  font-size: 1.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.app-description {
+  background: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 4rem;
+}
+
+.app-description h2 {
+  color: #1e293b;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.app-description p {
+  color: #475569;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.feature-icon {
+  color: #3b82f6;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+  color: #1e293b;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.step {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  font-weight: bold;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+}
+
+.contact-section {
+  text-align: center;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  padding: 4rem 2rem;
+  border-radius: 16px;
+  color: white;
+  margin-top: 4rem;
+}
+
+.contact-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.contact-section p {
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.contact-button {
+  display: inline-block;
+  background: white;
+  color: #3b82f6;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+  .about-container {
+    padding: 1rem;
+  }
+
+  .about-header h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+  }
+
+  .features-grid,
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .app-description,
+  .feature-card,
+  .step {
+    padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-icon {
+    animation: none;
+  }
+
+  .feature-card:hover,
+  .step:hover,
+  .contact-button:hover {
+    transform: none;
+  }
+}

@@ -9,6 +9,9 @@ import Register from './components/pages/Register';
 import Header from './components/pages/header';
 import Task from './components/pages/mytasks';
 import Dashboard from './components/pages/dashboard';
+import About from './components/pages/about';
+import Categories from './components/pages/categories';
+import Profile from './components/pages/profile';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -40,6 +43,30 @@ function AppRoutes() {
                 <Task />
               </ProtectedRoute>
             } 
+          />
+          <Route 
+            path="/categories" 
+            element={
+              <ProtectedRoute>
+                <Categories />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/about" 
+            element={
+              <ProtectedRoute>
+                <About />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
           />
           <Route 
             path="/" 

@@ -26,6 +26,10 @@ const UPDATE_TASK_ERROR = 'UPDATE_TASK_ERROR';
 const DELETE_TASK_START = 'DELETE_TASK_START';
 const DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS';
 const DELETE_TASK_ERROR = 'DELETE_TASK_ERROR';
+const UPDATE_USER_START = 'UPDATE_USER_START';
+const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+const UPDATE_USER_ERROR = 'UPDATE_USER_ERROR';
+
 
 // Auth reducer
 const authReducer = (state, action) => {
@@ -90,6 +94,30 @@ case DELETE_TASK_ERROR:
     ...state,
     loading: false,
     error: action.payload
+  };
+case UPDATE_USER_START:
+  return {
+    ...state,
+    loading: true,
+    error: null
+  };
+case UPDATE_USER_SUCCESS:
+  return {
+    ...state,
+    user: action.payload,
+    loading: false,
+    error: null
+  };
+case UPDATE_USER_ERROR:
+  return {
+    ...state,
+    loading: false,
+    error: action.payload
+  };
+case 'SET_USER':
+  return {
+    ...state,
+    user: action.payload
   };
     case 'LOGIN_START':
     case 'REGISTER_START':
@@ -226,6 +254,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to fetch tasks
   const getTasks = async () => {
     dispatch({ type: FETCH_TASKS_START });
     try {
@@ -244,6 +273,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to update a task
   const updateTask = async (id, taskData) => {
     dispatch({ type: UPDATE_TASK_START });
     try {
@@ -262,6 +292,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to delete a task
   const deleteTask = async (id) => {
     dispatch({ type: DELETE_TASK_START });
     try {
@@ -280,6 +311,43 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to update user profile
+  const updateUser = async (userData) => {
+    dispatch({ type: UPDATE_USER_START });
+    try {
+      const response = await authService.updateUser( userData);
+      
+      // Update localStorage with new user data
+      localStorage.setItem('user', JSON.stringify(response.data));
+      
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: response.data
+      });
+      
+      return response.data;
+    } catch (error) {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: error.response?.data?.message || 'Failed to update profile'
+      });
+      throw error;
+    }
+  };
+
+  // Function to refresh user data
+  const refreshUserData = async (userId) => {
+    try {
+      const userData = await authService.refreshUserData(userId);
+      dispatch({
+        type: 'SET_USER',
+        payload: userData
+      });
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       ...state,
@@ -289,7 +357,9 @@ export const AuthProvider = ({ children }) => {
       addTask,
       getTasks,
       updateTask,
-      deleteTask
+      deleteTask,
+      updateUser,
+      refreshUserData
     }}>
       {children}
     </AuthContext.Provider>

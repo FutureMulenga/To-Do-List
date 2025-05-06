@@ -24,6 +24,17 @@ api.interceptors.request.use(
 export const authService = {
   login: (credentials) => api.post('/auth/login/', credentials),
   register: (userData) => api.post('/auth/register/', userData),
+  updateUser: (id, userData) => api.put('/auth/user/update/', userData),
+  refreshUserData: async (userId) => {
+    try {
+      const response = await api.get(`/auth/users/${userId}/`);
+      // Update localStorage with fresh user data
+      localStorage.setItem('user', JSON.stringify(response.data));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to refresh user data' };
+    }
+  },
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -31,11 +42,11 @@ export const authService = {
 };
 
 export const todoService = {
-  getTasks: () => api.get('/auth/tasks/'),
-  getTask: (id) => api.get(`/tasks/${id}`),
-  addTask: (taskData) => api.post('/auth/tasks/', taskData), 
-  updateTask: (id, task) => api.put(`/auth/tasks/${id}/`, task),
-  deleteTask: (id) => api.delete(`/auth/tasks/${id}`),
+  getTasks: () => api.get('/tasks/tasks/'),
+  getTask: (id) => api.get(`/tasks/tasks/${id}`),
+  addTask: (taskData) => api.post('/tasks/tasks/', taskData), 
+  updateTask: (id, task) => api.put(`/tasks/tasks/${id}/`, task),
+  deleteTask: (id) => api.delete(`/tasks/tasks/${id}`),
 };
 
 export default api;

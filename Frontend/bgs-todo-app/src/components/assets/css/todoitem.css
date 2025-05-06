@@ -10,16 +10,18 @@
   align-items: center;
   padding: 1.25rem;
   margin-bottom: 1rem;
-  background-color: #ffffff;
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .todo-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-hover-bg);
 }
 
 .todo-item.completed {
