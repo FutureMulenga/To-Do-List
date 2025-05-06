@@ -20,7 +20,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// API service methods
+// AUTH API service methods
 export const authService = {
   login: (credentials) => api.post('/auth/login/', credentials),
   register: (userData) => api.post('/auth/register/', userData),
@@ -41,6 +41,7 @@ export const authService = {
   }
 };
 
+// TASK API service methods
 export const todoService = {
   getTasks: () => api.get('/tasks/tasks/'),
   getTask: (id) => api.get(`/tasks/tasks/${id}`),

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CheckSquare, User, Settings, LogOut, Menu, X, Bell } from 'lucide-react';
+import { Sun, Moon, CheckSquare, User, Settings, LogOut, Menu, X, Bell } from 'lucide-react';
 import '../assets/css/header.css';
 
 const Header = () => {
@@ -14,6 +14,7 @@ const Header = () => {
     { id: 1, message: "You have 3 tasks due today", read: false },
     { id: 2, message: "Welcome to BGS Todo App!", read: true }
   ]);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -35,6 +36,12 @@ const Header = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Theme management
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -51,6 +58,10 @@ const Header = () => {
 
   const isActivePage = (path) => {
     return location.pathname === path;
+  };
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
   return (
@@ -93,6 +104,17 @@ const Header = () => {
 
           {isAuthenticated ? (
             <div className="user-section">
+              {/* Theme toggle */}
+              <div className="theme-toggle">
+                <button 
+                  className="theme-toggle-button"
+                  onClick={toggleTheme}
+                  aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                  {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                </button>
+              </div>
+
               {/* Notifications */}
               <div className="notification-container">
                 <button 
