@@ -5,6 +5,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Task
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Custom JWT serializer that includes user data in response
@@ -27,6 +29,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         return data
 
+#
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)

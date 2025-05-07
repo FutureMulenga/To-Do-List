@@ -17,6 +17,7 @@ class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = [AllowAny]
 
+
 # this view is used to register the user
 class RegisterView(generics.CreateAPIView):
     """
@@ -67,6 +68,7 @@ class UserUpdateView(generics.UpdateAPIView):
             }
         }, status=status.HTTP_200_OK)
 
+
 # this view is used to get the tasks of the user
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
@@ -77,6 +79,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 # this view is used to get all the users in the system
 class UserListView(generics.ListAPIView):
@@ -90,6 +93,7 @@ class UserListView(generics.ListAPIView):
     def get_queryset(self):
         # You might want to add filters here
         return User.objects.all().order_by('-date_joined')
+
 
 # this view is used to get the user by id
 class UserDetailView(generics.RetrieveAPIView):
