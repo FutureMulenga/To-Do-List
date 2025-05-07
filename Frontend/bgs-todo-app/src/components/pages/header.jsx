@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Sun, Moon, CheckSquare, User, Settings, LogOut, Menu, X, Bell } from 'lucide-react';
 import '../assets/css/header.css';
-
-
+import useOutsideClick from '../hooks/useOutsideClick';
+import useNavigationEffect from '../hooks/useNavigationEffect';
+import useTheme from '../hooks/useTheme';
 
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -16,35 +17,12 @@ const Header = () => {
     { id: 1, message: "You have 3 tasks due today", read: false },
     { id: 2, message: "Welcome to BGS Todo App!", read: true }
   ]);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const dropdownRef = useRef(null);
+  const [theme, toggleTheme] = useTheme();
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-
-  // Close mobile menu when navigating
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  
-  // Theme management
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+  // Use custom hooks
+  useOutsideClick(dropdownRef, () => setDropdownOpen(false));
+  useNavigationEffect(() => setMobileMenuOpen(false));
 
   const handleLogout = () => {
     logout();
@@ -62,10 +40,6 @@ const Header = () => {
 
   const isActivePage = (path) => {
     return location.pathname === path;
-  };
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
   return (

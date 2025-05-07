@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Flag, Tag, AlertCircle, X } from 'lucide-react';
+import { Calendar, Flag, Tag, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../assets/css/todoitem.css';
 
@@ -11,7 +11,7 @@ const TodoItem = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '',
-    due_date: '', // Changed from dueDate to due_date to match backend
+    due_date: '',
     priority: '',
     category: ''
   });
@@ -72,7 +72,7 @@ const TodoItem = () => {
     setEditingTask(task.id);
     setEditForm({
       title: task.title,
-      due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '', // Changed from dueDate to due_date
+      due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '',
       priority: task.priority || 'medium',
       category: task.category || ''
     });
@@ -101,6 +101,9 @@ const TodoItem = () => {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
     // Check if due date is today
     if (date.toDateString() === today.toDateString()) {
@@ -110,12 +113,30 @@ const TodoItem = () => {
     if (date.toDateString() === tomorrow.toDateString()) {
       return 'Tomorrow';
     }
+    // Check if due date was yesterday
+    if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    }
+    
     // Format other dates
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
     });
+  };
+
+  // Calculate how many days a task is overdue
+  const getDaysOverdue = (dueDate) => {
+    const date = new Date(dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    
+    const diffTime = today.getTime() - date.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays;
   };
 
   // Group tasks by due date
@@ -127,37 +148,64 @@ const TodoItem = () => {
     nextWeek.setDate(today.getDate() + 7);
 
     return {
+      overdue: tasks.filter(task => {
+        if (!task.due_date || task.completed) return false;
+        const taskDate = new Date(task.due_date);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate < today;
+      }),
       today: tasks.filter(task => {
-        if (!task.due_date) return false; // Changed from dueDate to due_date
+        if (!task.due_date) return false;
         const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate.getTime() === today.getTime();
       }),
       upcoming: tasks.filter(task => {
-        if (!task.due_date) return false; // Changed from dueDate to due_date
+        if (!task.due_date) return false;
         const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate > today && taskDate <= nextWeek;
       }),
       later: tasks.filter(task => {
-        if (!task.due_date) return false; // Changed from dueDate to due_date
+        if (!task.due_date) return false;
         const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate > nextWeek;
       }),
-      noDueDate: tasks.filter(task => !task.due_date) // Changed from dueDate to due_date
+      completed: tasks.filter(task => task.completed),
+      noDueDate: tasks.filter(task => !task.due_date && !task.completed)
     };
   };
 
+  // Handle extending due date for overdue tasks
+  const handleExtendDueDate = async (task, days) => {
+    try {
+      const newDueDate = new Date();
+      newDueDate.setDate(newDueDate.getDate() + days);
+      
+      // Format for Django API
+      const formattedDate = newDueDate.toISOString().split('T')[0] + 'T00:00:00Z';
+      
+      await updateTask(task.id, { due_date: formattedDate });
+      fetchTasks(); // Refresh the task list
+    } catch (err) {
+      console.error("Extend due date error:", err);
+      setError('Failed to extend due date: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   // Render task groups
-  const renderTaskGroup = (tasks, title) => {
+  const renderTaskGroup = (tasks, title, isOverdue = false) => {
     if (!tasks || tasks.length === 0) return null;
 
     return (
-      <div className="task-group">
-        <h2 className="task-group-title">{title}</h2>
+      <div className={`task-group ${isOverdue ? 'overdue-group' : ''}`}>
+        <h2 className={`task-group-title ${isOverdue ? 'overdue-title' : ''}`}>
+          {title}
+          {isOverdue && <span className="overdue-count">{tasks.length}</span>}
+        </h2>
         {tasks.map(task => (
-          <div key={task.id} className={`todo-item ${task.completed ? 'completed' : ''}`}>
+          <div key={task.id} className={`todo-item ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue-item' : ''}`}>
             {editingTask === task.id ? (
               <div className="edit-form">
                 <input
@@ -227,8 +275,11 @@ const TodoItem = () => {
                         }`}>
                           <Calendar size={14} className="inline-icon" />
                           {formatDueDate(task.due_date)}
-                          {new Date(task.due_date) < new Date() && !task.completed && (
-                            <AlertCircle size={14} className="ml-1 inline-icon text-red-500" />
+                          {isOverdue && (
+                            <span className="overdue-days">
+                              <Clock size={14} className="inline-icon" />
+                              {getDaysOverdue(task.due_date)} {getDaysOverdue(task.due_date) === 1 ? 'day' : 'days'} overdue
+                            </span>
                           )}
                         </span>
                       )}
@@ -251,6 +302,24 @@ const TodoItem = () => {
                 </div>
                 
                 <div className="todo-actions">
+                  {isOverdue && (
+                    <div className="overdue-actions">
+                      <button 
+                        onClick={() => handleExtendDueDate(task, 1)} 
+                        className="extend-btn"
+                        title="Extend to tomorrow"
+                      >
+                        +1 Day
+                      </button>
+                      <button 
+                        onClick={() => handleExtendDueDate(task, 7)} 
+                        className="extend-btn"
+                        title="Extend by one week"
+                      >
+                        +1 Week
+                      </button>
+                    </div>
+                  )}
                   <button onClick={() => handleEditClick(task)} className="edit-btn">
                     Edit
                   </button>
@@ -282,10 +351,12 @@ const TodoItem = () => {
         <div className="no-tasks">No tasks found. Add a task to get started!</div>
       ) : (
         <>
+          {renderTaskGroup(groupedTasks.overdue, "Overdue Tasks", true)}
           {renderTaskGroup(groupedTasks.today, "Today's Tasks")}
           {renderTaskGroup(groupedTasks.upcoming, "This Week's Tasks")}
           {renderTaskGroup(groupedTasks.later, "Upcoming Tasks")}
           {renderTaskGroup(groupedTasks.noDueDate, "Tasks without Due Date")}
+          {renderTaskGroup(groupedTasks.completed, "Completed Tasks")}
         </>
       )}
     </div>
