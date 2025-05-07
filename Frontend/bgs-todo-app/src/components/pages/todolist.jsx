@@ -11,14 +11,13 @@ const TodoItem = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '',
-    dueDate: '',
+    due_date: '', // Changed from dueDate to due_date to match backend
     priority: '',
     category: ''
   });
   
   useEffect(() => {
     fetchTasks();
-  
   }, []);
 
   const fetchTasks = async () => {
@@ -32,8 +31,7 @@ const TodoItem = () => {
     }
   };
 
-  //updting task
-  // Note: The API should return the updated task object after a successful update
+  // Updating task
   const handleUpdate = async (id, updatedTask) => {
     try {
       setLoading(true);
@@ -46,14 +44,14 @@ const TodoItem = () => {
       );
       setTasks(updatedTasks);
     } catch (err) {
+      console.error("Update error:", err);
       setError('Failed to update task: ' + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
   };
 
-  //deteleting task
-  // Note: The API should return a success message or status code after deletion
+  // Deleting task
   const handleDelete = async (id) => {
     try {
       setLoading(true);
@@ -69,11 +67,12 @@ const TodoItem = () => {
     }
   };
 
+  // Editing task
   const handleEditClick = (task) => {
     setEditingTask(task.id);
     setEditForm({
       title: task.title,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+      due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '', // Changed from dueDate to due_date
       priority: task.priority || 'medium',
       category: task.category || ''
     });
@@ -81,10 +80,18 @@ const TodoItem = () => {
 
   const handleEditSubmit = async (id) => {
     try {
-      await updateTask(id, editForm);
+      // Format date properly for Django
+      const formData = { ...editForm };
+      if (formData.due_date) {
+        // Ensure date is in correct ISO format with time for Django
+        formData.due_date = `${formData.due_date}T00:00:00Z`;
+      }
+      
+      await updateTask(id, formData);
       setEditingTask(null);
       fetchTasks(); // Refresh the task list
     } catch (err) {
+      console.error("Edit submit error:", err);
       setError('Failed to update task: ' + (err.response?.data?.message || err.message));
     }
   };
@@ -111,6 +118,7 @@ const TodoItem = () => {
     });
   };
 
+  // Group tasks by due date
   const groupTasks = (tasks) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -120,24 +128,28 @@ const TodoItem = () => {
 
     return {
       today: tasks.filter(task => {
-        const taskDate = new Date(task.dueDate);
+        if (!task.due_date) return false; // Changed from dueDate to due_date
+        const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate.getTime() === today.getTime();
       }),
       upcoming: tasks.filter(task => {
-        const taskDate = new Date(task.dueDate);
+        if (!task.due_date) return false; // Changed from dueDate to due_date
+        const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate > today && taskDate <= nextWeek;
       }),
       later: tasks.filter(task => {
-        const taskDate = new Date(task.dueDate);
+        if (!task.due_date) return false; // Changed from dueDate to due_date
+        const taskDate = new Date(task.due_date);
         taskDate.setHours(0, 0, 0, 0);
         return taskDate > nextWeek;
       }),
-      noDueDate: tasks.filter(task => !task.dueDate)
+      noDueDate: tasks.filter(task => !task.due_date) // Changed from dueDate to due_date
     };
   };
 
+  // Render task groups
   const renderTaskGroup = (tasks, title) => {
     if (!tasks || tasks.length === 0) return null;
 
@@ -157,8 +169,8 @@ const TodoItem = () => {
                 />
                 <input
                   type="date"
-                  value={editForm.dueDate}
-                  onChange={(e) => setEditForm({...editForm, dueDate: e.target.value})}
+                  value={editForm.due_date}
+                  onChange={(e) => setEditForm({...editForm, due_date: e.target.value})}
                   className="edit-input"
                 />
                 <select
@@ -205,17 +217,17 @@ const TodoItem = () => {
                     <span className="todo-title">{task.title}</span>
                     
                     <div className="todo-metadata">
-                      {task.dueDate && (
+                      {task.due_date && (
                         <span className={`todo-due-date ${
-                          new Date(task.dueDate) < new Date() && !task.completed 
+                          new Date(task.due_date) < new Date() && !task.completed 
                             ? 'overdue' 
-                            : new Date(task.dueDate).toDateString() === new Date().toDateString() 
+                            : new Date(task.due_date).toDateString() === new Date().toDateString() 
                               ? 'due-today'
                               : ''
                         }`}>
                           <Calendar size={14} className="inline-icon" />
-                          {formatDueDate(task.dueDate)}
-                          {new Date(task.dueDate) < new Date() && !task.completed && (
+                          {formatDueDate(task.due_date)}
+                          {new Date(task.due_date) < new Date() && !task.completed && (
                             <AlertCircle size={14} className="ml-1 inline-icon text-red-500" />
                           )}
                         </span>
