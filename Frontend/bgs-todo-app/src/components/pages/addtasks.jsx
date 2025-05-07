@@ -26,7 +26,6 @@ const AddTask = ({ onTaskAdded }) => {
 
     setIsSubmitting(true);
     
-    
     // Format the date properly for the API
     const formattedDate = dueDate ? new Date(dueDate).toISOString() : null;
 
@@ -56,6 +55,7 @@ const AddTask = ({ onTaskAdded }) => {
     }
   };
 
+
   // Get priority color
   const getPriorityColor = (priorityValue) => {
     switch (priorityValue) {
@@ -70,6 +70,7 @@ const AddTask = ({ onTaskAdded }) => {
     }
   };
 
+  
   return (
     <form onSubmit={handleSubmit} className="add-task-form">
       <div className="basic-fields">

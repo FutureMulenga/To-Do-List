@@ -2,6 +2,8 @@ import React from 'react';
 import { CheckSquare, Calendar, Tag, Flag, Clock } from 'lucide-react';
 import '../assets/css/about.css';
 
+
+
 const About = () => {
   return (
     <div className="about-container">

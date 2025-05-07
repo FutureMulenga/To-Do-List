@@ -10,8 +10,12 @@ const initialState = {
   error: null
 };
 
+
+
 // Create context
 export const AuthContext = createContext(initialState);
+
+
 
 // Action types
 const ADD_TASK_START = 'ADD_TASK_START';
@@ -35,7 +39,8 @@ const UPDATE_USER_ERROR = 'UPDATE_USER_ERROR';
 const authReducer = (state, action) => {
   switch (action.type) {
 
-    // Add these cases to your authReducer
+
+// Add these cases to your authReducer
 case FETCH_TASKS_START:
   return {
     ...state,
@@ -174,9 +179,11 @@ case 'SET_USER':
   }
 };
 
+
 // Provider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
 
   // login function
   const login = async (username, password) => {
@@ -211,6 +218,7 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.register(userData);
       const { user, token } = response.data;
       
+
       // Store in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -230,10 +238,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Logout function
   const logout = () => {
     authService.logout();
     dispatch({ type: 'LOGOUT' });
   };
+
 
   //the function for sending the task to the backend
   const addTask = async (taskData) => {
@@ -254,6 +264,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   // Function to fetch tasks
   const getTasks = async () => {
     dispatch({ type: FETCH_TASKS_START });
@@ -272,6 +283,7 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
 
   // Function to update a task
   const updateTask = async (id, taskData) => {
@@ -292,6 +304,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   // Function to delete a task
   const deleteTask = async (id) => {
     dispatch({ type: DELETE_TASK_START });
@@ -310,6 +323,7 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
 
   // Function to update user profile
   const updateUser = async (userData) => {
@@ -335,6 +349,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   // Function to refresh user data
   const refreshUserData = async (userId) => {
     try {
@@ -348,6 +363,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Provide the context value
   return (
     <AuthContext.Provider value={{
       ...state,
@@ -365,6 +381,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 // Custom hook for using auth context
 export const useAuth = () => {

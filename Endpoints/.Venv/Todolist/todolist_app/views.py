@@ -8,6 +8,8 @@ from rest_framework import viewsets
 from .models import Task
 from django.contrib.auth.models import User
 
+
+# this view is used to get the token for the user
 class LoginView(TokenObtainPairView):
     """
     Custom login endpoint that uses JWT but returns in the format expected by the frontend
@@ -15,6 +17,7 @@ class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = [AllowAny]
 
+# this view is used to register the user
 class RegisterView(generics.CreateAPIView):
     """
     Custom registration endpoint that creates a user and returns a token
@@ -41,6 +44,7 @@ class RegisterView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
+#this view is used to update the user profile
 class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -63,7 +67,7 @@ class UserUpdateView(generics.UpdateAPIView):
             }
         }, status=status.HTTP_200_OK)
 
-
+# this view is used to get the tasks of the user
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
@@ -74,7 +78,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
+# this view is used to get all the users in the system
 class UserListView(generics.ListAPIView):
     """
     Endpoint to get all users
@@ -87,7 +91,7 @@ class UserListView(generics.ListAPIView):
         # You might want to add filters here
         return User.objects.all().order_by('-date_joined')
 
-
+# this view is used to get the user by id
 class UserDetailView(generics.RetrieveAPIView):
     """
     Endpoint to get user by ID

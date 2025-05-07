@@ -8,6 +8,8 @@ const api = axios.create({
   },
 });
 
+
+
 // Add a request interceptor to include auth token in requests
 api.interceptors.request.use(
   (config) => {
@@ -19,6 +21,8 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+
 
 // AUTH API service methods
 export const authService = {
@@ -40,6 +44,9 @@ export const authService = {
     localStorage.removeItem('user');
   }
 };
+
+
+
 
 // TASK API service methods
 export const todoService = {

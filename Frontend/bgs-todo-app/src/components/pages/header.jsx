@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { Sun, Moon, CheckSquare, User, Settings, LogOut, Menu, X, Bell } from 'lucide-react';
 import '../assets/css/header.css';
 
+
+
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
@@ -31,11 +33,13 @@ const Header = () => {
     };
   }, []);
 
+
   // Close mobile menu when navigating
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  
   // Theme management
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

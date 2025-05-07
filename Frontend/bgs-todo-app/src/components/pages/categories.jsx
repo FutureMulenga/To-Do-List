@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/categories.css';
 
+
+
 const Categories = () => {
   const { getTasks, updateTask } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const Categories = () => {
     }
   };
 
+    // Function to get category icon based on category name
   const getCategoryIcon = (category) => {
     switch (category?.toLowerCase()) {
       case 'work':
@@ -39,7 +42,9 @@ const Categories = () => {
     }
   };
 
-  const handleTaskComplete = async (id, completed) => {
+
+// Function to handle task completion
+const handleTaskComplete = async (id, completed) => {
     if (updating) return;
     
     try {
@@ -57,7 +62,9 @@ const Categories = () => {
     }
   };
 
-  const handleAddTask = (category) => {
+
+// Function to handle adding a new task
+const handleAddTask = (category) => {
     // Navigate to add task page with pre-selected category
     navigate('/task', { state: { category } });
   };
@@ -68,7 +75,9 @@ const Categories = () => {
     others: tasks.filter(task => !task.category || !['work', 'personal'].includes(task.category.toLowerCase()))
   };
 
-  const renderTaskList = (categoryTasks, category) => (
+  
+// Function to render task list for each category
+const renderTaskList = (categoryTasks, category) => (
     <div className="category-section" key={category}>
       <div className="category-header">
         {getCategoryIcon(category)}
